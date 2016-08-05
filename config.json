@@ -1,0 +1,36 @@
+{
+    "buttons": [
+        {
+            "name": "Right Button",
+            "port": "B",
+            "pin": 7,
+            "led": {
+                "symbol": "error"
+            }
+        },
+        {
+            "name": "Left Button",
+            "port": "B",
+            "pin": 6,
+            "led": {
+                "symbol": "success"
+            }
+        },
+        {
+            "name": "B Button",
+            "port": "B",
+            "pin": 5,
+            "led": {
+                "symbol": "info"
+            }
+        },
+        {
+            "name": "A Button",
+            "port": "B",
+            "pin": 4,
+            "led": {
+                "symbol": "warning"
+            }
+        }
+    ]
+}

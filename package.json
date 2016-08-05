@@ -1,0 +1,20 @@
+{
+    "name": "gpiotest",
+    "version": "0.0.0",
+    "description": "GPIO Test",
+    "main": "app.js",
+    "author": {
+        "name": "Bert Pareyn"
+    },
+    "dependencies": {
+        "bunyan": "latest",
+        "bunyan-format": "latest",
+        "tessel": "latest",
+        "t2-button": "latest"
+    },
+    "devDependencies": {},
+    "keywords": [
+        "Tessel"
+    ],
+    "license": "MIT"
+}
