@@ -25,6 +25,7 @@
 var tessel = require('tessel');
 
 var toggleLeds = exports.toggleLeds = function() {
+    // Don't attempt to access leds when none are found
     if (!tessel.led || !tessel.led.length) {
         return;
     }
@@ -36,6 +37,7 @@ var toggleLeds = exports.toggleLeds = function() {
 };
 
 var turnLedsOff = exports.turnLedsOff = function() {
+    // Don't attempt to access leds when none are found
     if (!tessel.led || !tessel.led.length) {
         return;
     }
@@ -47,6 +49,7 @@ var turnLedsOff = exports.turnLedsOff = function() {
 };
 
 var turnLedsOn = exports.turnLedsOn = function() {
+    // Don't attempt to access leds when none are found
     if (!tessel.led || !tessel.led.length) {
         return;
     }
@@ -63,6 +66,7 @@ var finishLoadIndication = exports.finishLoadIndication = function() {
 };
 
 var startLoadIndication = exports.startLoadIndication = function(ledId) {
+    // Don't attempt to access leds when none are found
     if (!tessel.led || !tessel.led.length) {
         return;
     }

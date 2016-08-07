@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright(c) 2016 Bert Pareyn
+ * Copyright(c) 2013 Bert Pareyn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,37 +22,9 @@
  * SOFTWARE.
  */
 
-var tessel = require('tessel');
-
-var buttonController = require('./controller/buttons');
-var ledController = require('./controller/leds');
-var log = require('./controller/log').log;
-var config = require('./config.json');
-
-// Show loading indication on the Tessel
-ledController.startLoadIndication(3);
-
-// Initialize all configured controller buttons
-buttonController.initButtons(config, function(err) {
-    if (err) {
-        log.error(err);
-    }
-
-    ledController.finishLoadIndication();
-    ledController.turnLedsOff();
-
-    var i = 0;
-    var toggleLedsInterval = setInterval(function() {
-        ledController.toggleLeds();
-        i++;
-        if (i === 10) {
-            clearInterval(toggleLedsInterval);
-            if (tessel.led && tessel.led.length) {
-                tessel.led[3].on();
-            }
-        }
-    }, 200);
-
-    log.info('Controller ready to go');
+var bunyanFormatter = require('bunyan-format');
+var bunyanOutStream = bunyanFormatter({ outputMode: 'short' });
+var log = exports.log = require('bunyan').createLogger({
+    name: 'app',
+    stream: bunyanOutStream
 });
-

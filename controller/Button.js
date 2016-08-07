@@ -30,34 +30,81 @@ var log = require('bunyan').createLogger({
     name: 'app',
     stream: bunyanOutStream
 });
+var Pusher = require('pusher');
 
+/**
+ * Define and create a button component
+ *
+ * @param {Object}    config    Configuration for the button to initialise
+ */
 var Button = exports.Button = function(config) {
+    this.id = config.id;
     this.name = config.name;
     this.port = config.port;
     this.pin = config.pin;
+    this.events = config.events;
     this.led = config.led;
+    this.pusher = new Pusher(config.pusher);
 
     var buttonPin = tessel.port[this.port].pin[this.pin];
-    var led = tessel.led[_getLedId(this.led.symbol)];
     var button = Object.create(t2Button);
 
+    var led = tessel.led[_getLedId(this.led.symbol)];
+
+    // Listen for press/release events on the button hardware
     button.listen({
             frequency: 100,
             pin: buttonPin
         })
         .on('press', function() {
+            // Only trigger push messages when the config for the button requires it
+            if (this.events.indexOf('press') > -1) {
+                this.pusher.trigger('gpio_channel', 'press_' + this.id, {
+                    'message': 'Pressed "' + this.name + '" button'
+                });
+            }
+
+            // Turn on the associated led
             led.on();
+
+            // Log the button press to the console
             log.info('Pressed "' + this.name + '" button');
         }.bind(this))
         .on('release', function() {
+            // Only trigger push messages when the config for the button requires it
+            if (this.events.indexOf('release') > -1) {
+                this.pusher.trigger('gpio_channel', 'release_' + this.id, {
+                    'message': 'Pressed "' + this.name + '" button'
+                });
+            }
+
+            // Turn off the associated led
             led.off();
+
+            // Log the button release to the console
             log.info('Released "' + this.name + '" button');
         }.bind(this))
         .on('error', function(err) {
+            // Only trigger push messages when the config for the button requires it
+            if (this.events.indexOf('error') > -1) {
+                this.pusher.trigger('gpio_channel', 'communication_error', {
+                    'message': 'Could not send the message'
+                });
+            }
+
+            // Log the error to the console
             log.error('Issue processing "' + this.name + '" button');
         }.bind(this));
+
+    log.info("Successfully initialized controller button \"" + this.name + "\"");
 };
 
+/**
+ * Get the ID based on the human readable symbol for the led
+ *
+ * @param  {String}    ledSymbol    Human readable name of the led to get the ID for
+ * @return {String}                 The ID of the led on the Tessel hardware
+ */
 var _getLedId = function(ledSymbol) {
     switch (ledSymbol) {
         case 'info':

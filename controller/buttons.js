@@ -23,17 +23,20 @@
  */
 
 var Button = require('./Button').Button;
+var log = require('./log').log;
 
 /**
  * Initialize all controller buttons
  *
- * @param  {[type]}      config              The controller's configuration object
+ * @param  {Object}      config              The controller's configuration object
  * @param  {Function}    callback            Standard callback function
  * @param  {String}      [callback.error]    Optional error message
  */
 var initButtons = exports.initButtons = function(config, callback) {
     for (var i = 0; i < config.buttons.length; i++) {
-        new Button(config.buttons[i]);
+        var buttonConfig = config.buttons[i];
+        buttonConfig.pusher = config.pusher;
+        new Button(buttonConfig);
     }
 
     callback();

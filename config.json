@@ -1,36 +1,50 @@
 {
     "buttons": [
         {
+            "id": "r",
             "name": "Right Button",
             "port": "B",
             "pin": 7,
             "led": {
                 "symbol": "error"
-            }
+            },
+            "events": ["error", "press", "release"]
         },
         {
+            "id": "l",
             "name": "Left Button",
             "port": "B",
             "pin": 6,
             "led": {
                 "symbol": "success"
-            }
+            },
+            "events": ["error", "press", "release"]
         },
         {
+            "id": "b",
             "name": "B Button",
             "port": "B",
             "pin": 5,
             "led": {
                 "symbol": "info"
-            }
+            },
+            "events": ["error", "press"]
         },
         {
+            "id": "a",
             "name": "A Button",
             "port": "B",
             "pin": 4,
             "led": {
                 "symbol": "warning"
-            }
+            },
+            "events": ["error", "press"]
         }
-    ]
+    ],
+    "pusher": {
+        "appId": "",
+        "key": "",
+        "secret": "",
+        "host": ""
+    }
 }
