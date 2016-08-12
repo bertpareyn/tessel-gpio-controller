@@ -22,7 +22,13 @@
  * SOFTWARE.
  */
 
-var tessel = require('tessel');
+try {
+    var tessel = require("tessel");
+} catch(e) {
+    console.error("Running locally, using tessel-mocks");
+    var Tessel = require('tessel-mocks');
+    tessel = new Tessel();
+}
 var t2Button = require('t2-button');
 var bunyanFormatter = require('bunyan-format');
 var bunyanOutStream = bunyanFormatter({ outputMode: 'short' });
@@ -49,52 +55,16 @@ var Button = exports.Button = function(config) {
     var buttonPin = tessel.port[this.port].pin[this.pin];
     var button = Object.create(t2Button);
 
-    var led = tessel.led[_getLedId(this.led.symbol)];
+    this.led = tessel.led[_getLedId(this.led.symbol)];
 
     // Listen for press/release events on the button hardware
     button.listen({
             frequency: 100,
             pin: buttonPin
         })
-        .on('press', function() {
-            // Only trigger push messages when the config for the button requires it
-            if (this.events.indexOf('press') > -1) {
-                this.pusher.trigger('gpio_channel', 'press_' + this.id, {
-                    'message': 'Pressed "' + this.name + '" button'
-                });
-            }
-
-            // Turn on the associated led
-            led.on();
-
-            // Log the button press to the console
-            log.info('Pressed "' + this.name + '" button');
-        }.bind(this))
-        .on('release', function() {
-            // Only trigger push messages when the config for the button requires it
-            if (this.events.indexOf('release') > -1) {
-                this.pusher.trigger('gpio_channel', 'release_' + this.id, {
-                    'message': 'Pressed "' + this.name + '" button'
-                });
-            }
-
-            // Turn off the associated led
-            led.off();
-
-            // Log the button release to the console
-            log.info('Released "' + this.name + '" button');
-        }.bind(this))
-        .on('error', function(err) {
-            // Only trigger push messages when the config for the button requires it
-            if (this.events.indexOf('error') > -1) {
-                this.pusher.trigger('gpio_channel', 'communication_error', {
-                    'message': 'Could not send the message'
-                });
-            }
-
-            // Log the error to the console
-            log.error('Issue processing "' + this.name + '" button');
-        }.bind(this));
+        .on('press', pressButton.bind(this))
+        .on('release', releaseButton.bind(this))
+        .on('error', buttonError.bind(this));
 
     log.info("Successfully initialized controller button \"" + this.name + "\"");
 };
@@ -118,4 +88,60 @@ var _getLedId = function(ledSymbol) {
         default:
             return 3;
     }
+};
+
+/**
+ * Pressed the button
+ */
+var pressButton = exports.pressButton = function() {
+    // Only trigger push messages when the config for the button requires it
+    /* istanbul ignore else */
+    if (this.events.indexOf('press') > -1) {
+        this.pusher.trigger('gpio_channel', 'press_' + this.id, {
+            'message': 'Pressed "' + this.name + '" button'
+        });
+    }
+
+    // Turn on the associated led
+    this.led.on();
+
+    // Log the button press to the console
+    log.info('Pressed "' + this.name + '" button');
+};
+
+/**
+ * Released the button
+ */
+var releaseButton = exports.releaseButton = function() {
+    // Only trigger push messages when the config for the button requires it
+    /* istanbul ignore else */
+    if (this.events.indexOf('release') > -1) {
+        this.pusher.trigger('gpio_channel', 'release_' + this.id, {
+            'message': 'Pressed "' + this.name + '" button'
+        });
+    }
+
+    // Turn off the associated led
+    this.led.off();
+
+    // Log the button release to the console
+    log.info('Released "' + this.name + '" button');
+};
+
+/**
+ * Logs the error when a button could not be pushed or released
+ *
+ * @param  {Object}    err    Error object containing information on the event
+ */
+var buttonError = exports.buttonError = function(err) {
+    // Only trigger push messages when the config for the button requires it
+    /* istanbul ignore else */
+    if (this.events.indexOf('error') > -1) {
+        this.pusher.trigger('gpio_channel', 'communication_error', {
+            'message': 'Could not send the message'
+        });
+    }
+
+    // Log the error to the console
+    log.error('Issue processing "' + this.name + '" button');
 };

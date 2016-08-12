@@ -22,10 +22,17 @@
  * SOFTWARE.
  */
 
-var tessel = require('tessel');
+try {
+    var tessel = require("tessel");
+} catch(e) {
+    console.error("Running locally, using tessel-mocks");
+    var Tessel = require('tessel-mocks');
+    tessel = new Tessel();
+}
 
 var toggleLeds = exports.toggleLeds = function() {
     // Don't attempt to access leds when none are found
+    /* istanbul ignore if */
     if (!tessel.led || !tessel.led.length) {
         return;
     }
@@ -38,6 +45,7 @@ var toggleLeds = exports.toggleLeds = function() {
 
 var turnLedsOff = exports.turnLedsOff = function() {
     // Don't attempt to access leds when none are found
+    /* istanbul ignore if */
     if (!tessel.led || !tessel.led.length) {
         return;
     }
@@ -50,6 +58,7 @@ var turnLedsOff = exports.turnLedsOff = function() {
 
 var turnLedsOn = exports.turnLedsOn = function() {
     // Don't attempt to access leds when none are found
+    /* istanbul ignore if */
     if (!tessel.led || !tessel.led.length) {
         return;
     }
@@ -67,11 +76,13 @@ var finishLoadIndication = exports.finishLoadIndication = function() {
 
 var startLoadIndication = exports.startLoadIndication = function(ledId) {
     // Don't attempt to access leds when none are found
+    /* istanbul ignore if */
     if (!tessel.led || !tessel.led.length) {
         return;
     }
 
     tessel.led[ledId].toggle(function() {
+        /* istanbul ignore else */
         if (!loadFinished) {
             setTimeout(function() {
                 if (!ledId) {
@@ -80,6 +91,7 @@ var startLoadIndication = exports.startLoadIndication = function(ledId) {
                     ledId--;
                 }
 
+                /* istanbul ignore else */
                 if (!loadFinished) {
                     startLoadIndication(ledId);
                 } else {

@@ -6,14 +6,26 @@
     "author": {
         "name": "Bert Pareyn"
     },
+    "repository": "https://github.com/bp323/tessel-gpio-controller",
     "dependencies": {
         "bunyan": "latest",
         "bunyan-format": "latest",
         "pusher": "latest",
-        "tessel": "latest",
         "t2-button": "latest"
     },
-    "devDependencies": {},
+    "devDependencies": {
+        "coveralls": "latest",
+        "istanbul": "latest",
+        "mocha": "latest",
+        "should": "latest",
+        "supertest": "latest",
+        "tessel-mocks": "https://github.com/bp323/tessel-mocks.git",
+        "test-console": "latest"
+    },
+    "scripts": {
+        "start": "node app.js",
+        "test": "istanbul cover _mocha --report html -- -R spec tests/ && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+    },
     "keywords": [
         "Tessel"
     ],

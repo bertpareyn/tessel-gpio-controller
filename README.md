@@ -1,4 +1,5 @@
 # Tessel GPIO Controller
+[![Build Status](https://travis-ci.org/bp323/tessel-gpio-controller.svg?branch=master)](https://travis-ci.org/bp323/tessel-gpio-controller) [![Coverage Status](https://coveralls.io/repos/github/bp323/tessel-gpio-controller/badge.svg?branch=master)](https://coveralls.io/github/bp323/tessel-gpio-controller?branch=master)
 ## What
 A small Tessel test project with at its core GPIO input.
 

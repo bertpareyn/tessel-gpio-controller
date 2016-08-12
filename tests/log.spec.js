@@ -1,7 +1,7 @@
 /*
  * The MIT License (MIT)
  *
- * Copyright(c) 2016 Bert Pareyn
+ * Copyright(c) 2013 Bert Pareyn
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,42 +22,29 @@
  * SOFTWARE.
  */
 
-try {
-    var tessel = require("tessel");
-} catch(e) {
-    console.error("Running locally, using tessel-mocks");
-    var Tessel = require('tessel-mocks');
-    tessel = new Tessel();
-}
-var buttonController = require('./controller/buttons');
-var ledController = require('./controller/leds');
-var log = require('./controller/log').log;
-var config = require('./config.json');
+var log = require('../controller/log');
+var should = require('should');
 
-// Show loading indication on the Tessel
-ledController.startLoadIndication(3);
+describe('Logging', function() {
+    describe('Expose logging', function() {
+        it('should expose a log object', function(done) {
+            log.log.should.be.ok();
+            done();
+        });
 
-// Initialize all configured controller buttons
-buttonController.initButtons(config, function(err) {
-    if (err) {
-        log.error(err);
-    }
+        it('should expose a `info` function on the log object', function(done) {
+            log.log.info.should.be.ok();
+            done();
+        });
 
-    ledController.finishLoadIndication();
-    ledController.turnLedsOff();
+        it('should expose a `warn` function on the log object', function(done) {
+            log.log.warn.should.be.ok();
+            done();
+        });
 
-    var i = 0;
-    var toggleLedsInterval = setInterval(function() {
-        ledController.toggleLeds();
-        i++;
-        if (i === 10) {
-            clearInterval(toggleLedsInterval);
-            if (tessel.led && tessel.led.length) {
-                tessel.led[3].on();
-            }
-        }
-    }, 200);
-
-    log.info('Controller ready to go');
+        it('should expose a `error` function on the log object', function(done) {
+            log.log.error.should.be.ok();
+            done();
+        });
+    });
 });
-
